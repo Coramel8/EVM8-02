@@ -125,13 +125,18 @@ window subsystem for linux : 위도우에서 매우 편하게 linux를 띄울 �
 - 나가는 건 exit
 
 
-[winget install --id GitHub.cli]
+[winget install GitHub.CLI]
 깃헙 CLI 설치
-
+이후 gh auth login으로 로그인인
 
 [gh repo create 리포지토리이름 --source=. --public --push]
 리포지토리 생성
-
+gh: github
+repo: repository
+create: 생성
+--source=. : 현재 디렉토리를 소스로 지정.
+--public : 공개 리포지토리로 설정
+--push : 로컬 커밋을 푸시
 
 
 ## IDE

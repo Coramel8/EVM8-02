@@ -125,6 +125,13 @@ window subsystem for linux : 위도우에서 매우 편하게 linux를 띄울 �
 - 나가는 건 exit
 
 
+[winget install --id GitHub.cli]
+깃헙 CLI 설치
+
+
+[gh repo create 리포지토리이름 --source=. --public --push]
+리포지토리 생성
+
 
 
 ## IDE

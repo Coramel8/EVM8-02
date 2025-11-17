@@ -17,3 +17,8 @@ contract Counter {
     emit Increment(by);
   }
 }
+
+
+
+gh repo create EVM8-02 --source=. --public --push
+git repo create EVM8-02 --source=. --public --push

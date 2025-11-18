@@ -20,5 +20,3 @@ contract Counter {
 
 
 
-gh repo create EVM8-02 --source=. --public --push
-git repo create EVM8-02 --source=. --public --push

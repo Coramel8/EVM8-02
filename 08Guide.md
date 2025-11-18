@@ -98,6 +98,32 @@ Hardhat이 '대화형 설치 마법사(setup wizard)'를 실행해서 새로운 
 [npx hardhat]
 실행 가능한 명령어들 리스트
 
+[npx hardhat compile]
+자동 compile.
+한 번에 전체를 컴파일해서 artifacts/ 폴더에 결과물을 생성.
+
+[npx hardhat test]
+이 contract가 가져야 할 sample test code들을 실행 후 결과 제출.
+
+[npx hardhat run ./scripts/deploy파일명]
+deploy 혹은 tx 실행.
+근데 이걸로 deploy하면 매번 초기화하기에 contract 이름이 전부 똑같음.
+    * 원래는 Hash(EOA+nonce) 해서 contract 만들기에 매번 달라야 함.
+
+[npx hardhat node]
+로컬에 테스트용 ETH 네트워크를 띄워줌.
+(이거 돌리고 있으면 해당 powershell에서는 입력 불가. 추가로 창 띄워야함)
+
+[npx hardhat run ./scripts/send-op-tx.ts --network localhost]
+[npx hardhat run ./scripts/deploy.js --network localhost]
+로컬에 네트워크 돌리는 상태에서 테스트.
+
+[npx hardhat ignition deploy ignition/modules/05WrappedETH.ts --network hardhatOp]
+hardhatOp로 띄우면 Op stack chain (base 등) 환경을 기반으로 테스트함.
+
+
+
+
 
 
 ## powershell

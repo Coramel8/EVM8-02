@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-52bcb30675171db28733eddab7cfffb260e2e877",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/05WrappedETH.sol": "project/contracts/05WrappedETH.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/05WrappedETH.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity 0.8.28;\r\n\r\n\r\n//Wrapped ETH라는 건, ETH를 어떠한 이유로 ERC-20 형태로 Wrapping해둔 토큰.\r\ncontract WrappedETH {\r\n\r\n    string name = \"Wrapped ETH\";\r\n    string symbol = \"WETH\";\r\n    uint8 decimals = 18;\r\n    uint totalSupply = 0;\r\n\r\n    mapping(address owner => uint amount) public balances;\r\n    \r\n    mapping(address => mapping(address => uint)) public allowances;\r\n    \r\n    event Transfer(address indexed from, address indexed to, uint amount);\r\n    event Approval(address indexed owner, address indexed spender, uint amount);\r\n\r\n    event Deposit(address indexed owner, uint amount);\r\n    event Withdraw(address indexed owner, uint amount);\r\n\r\n    constructor() {\r\n        balances[msg.sender] = totalSupply;\r\n    }\r\n\r\n    //deposit(ethToToken) : ETH 받아서 - WETH 잔액 증가\r\n    //withdraw(tokenTOETH) : WETH 받아서 - ETH 주기\r\n\r\n    function deposit() public payable returns (bool success) {\r\n        uint amount = msg.value;\r\n        address owner = msg.sender;\r\n        \r\n        totalSupply += amount;\r\n        balances[owner] += amount;\r\n\r\n        // event Transfer가 토큰 전송의 표준이라, 아래처럼 써야 다른 곳에서 읽어올 수 있음.\r\n        // 결국 WETH의 Transfer를 알려주는 게 중요.\r\n        emit Transfer(address(0), owner, amount); \r\n        emit Deposit(owner, amount);\r\n\r\n        return true;\r\n\r\n    }\r\n\r\n    function withdraw(uint amount) public returns (bool success) {\r\n\r\n        address payable owner = payable(msg.sender);\r\n\r\n        require(balances[owner] >= amount, \"not enough balance in account.\");\r\n\r\n        balances[owner] -= amount;\r\n        totalSupply -= amount;\r\n\r\n        // (1) 현재 withdraw는 토큰을 소각하는 해우이\r\n        // (2) 이걸 withdraw = 자사주 매입 으로 설계할 수도 있음\r\n        //  그러면 totalSupply는 감소하지 않고, CA의 balances가 증가할 것.(EOA->CA 로 transfer되는 개념)\r\n\r\n        owner.transfer(amount);\r\n\r\n        emit Transfer(address(this), owner, amount);\r\n\r\n        return true;\r\n    }\r\n\r\n\r\n    function balanceOf(address _owner) public view returns (uint balance) {\r\n        return balances[_owner];\r\n    }\r\n\r\n\r\n    function allowance(\r\n        address owner,\r\n        address spender\r\n    ) public view returns (uint) {\r\n        return allowances[owner][spender];\r\n    }\r\n\r\n    function transfer(\r\n        address _to, \r\n        uint _amount\r\n    ) public returns (bool success) {\r\n        \r\n        address owner = msg.sender;\r\n\r\n        require(balances[owner] >= _amount, \"Not enough balance in account\"); //체크\r\n        \r\n        balances[owner] -= _amount; //차감\r\n\r\n        balances[_to] += _amount; //전송\r\n        \r\n        emit Transfer(owner, _to, _amount); //이벤트\r\n        \r\n        return true; //함수가 끝까지 실행됐다 = 전송이 잘 됐다 = 성공 반환\r\n    }\r\n\r\n    \r\n\r\n    function approve(address _spender, uint _amount) public returns (bool success) {\r\n        \r\n        require(_spender != address(0), \"You should not allow to zero address\"); // 소각주소에 allow하는 거 아닌지 확인.\r\n        \r\n        allowances[msg.sender][_spender] = _amount;\r\n\r\n        emit Approval(msg.sender, _spender, allowances[msg.sender][_spender]);\r\n\r\n        return true;\r\n    }\r\n\r\n    function increaseAllowance(address _spender, uint _increaseamount) public returns (bool success) {\r\n        \r\n        allowances[msg.sender][_spender] += _increaseamount;\r\n\r\n        emit Approval(msg.sender, _spender, allowances[msg.sender][_spender]);\r\n\r\n        return true;\r\n    }\r\n\r\n    function decreaseAllowance(address _spender, uint _decreaseamount) public returns (bool success) {\r\n\r\n        require(allowances[msg.sender][_spender] >= _decreaseamount, \"allowance must be bigger than _decreaseamount\");\r\n        \r\n        allowances[msg.sender][_spender] -= _decreaseamount;\r\n\r\n        emit Approval(msg.sender, _spender, allowances[msg.sender][_spender]);\r\n\r\n        return true;\r\n    }\r\n\r\n\r\n    function transferFrom(address _from, address _to, uint _amount) public returns (bool success) {\r\n\r\n        uint currentAllowance = allowances[_from][msg.sender];\r\n\r\n        require(currentAllowance >= _amount, \"_amount must be same or smaller than allowance.\"); // allowance 체크\r\n\r\n        require(balances[_from] >= _amount, \"don't have enough amount.\"); // 밸런스 체크\r\n\r\n        allowances[_from][msg.sender] = currentAllowance - _amount; // allowance 차감\r\n\r\n        balances[_from] -= _amount; // 차감\r\n\r\n        balances[_to] += _amount; // 전송\r\n\r\n        emit Transfer(_from, _to, _amount); //이벤트\r\n\r\n        return true;\r\n\r\n    }\r\n\r\n\r\n    \r\n\r\n}\r\n\r\n\r\n\r\n"
+      }
+    }
+  }
+}

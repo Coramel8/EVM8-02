@@ -121,6 +121,25 @@ deploy 혹은 tx 실행.
 [npx hardhat ignition deploy ignition/modules/05WrappedETH.ts --network hardhatOp]
 hardhatOp로 띄우면 Op stack chain (base 등) 환경을 기반으로 테스트함.
 
+[hardhat 기타등등]
+hardhat에서는 커스텀 plugin으로 명령어를 만들 수도 있음.
+Openzeppline도 NPM 위에 올라가 있음.
+
+
+
+
+## ERC-721A
+ERC-721은 openzeppline이 제작한 표준.
+ERC-721A는 azuki 팀에서 만든 표준으로, tx 한 번에 여러 mint를 담는 식으로 가스비 및 시간을 절약.
+    mapping(uint=>address)로 NFT 번호 => 소유자 로 매핑이 되어있는데..
+    이걸 개별로 storage slot에 저장하면서 매번 tx를 쏘는 게 아니라, owner가 같으면 한 번에 쏨.
+    https://www.azuki.com/erc721a
+
+
+## Remixd
+Remix 데몬.
+로컬 pc에 있는 파일들을 remix 사이트에서 connect to localhost로 연결해 띄울 수 있음.
+
 
 
 
